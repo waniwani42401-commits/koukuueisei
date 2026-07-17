@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="ja" data-theme="system">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#16795a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="口腔衛生学">
+  <meta name="description" content="口腔衛生学の一問一答暗記アプリ。問題の追加・編集、画像添付、復習、バックアップ、オフラインに対応。">
+  <title>口腔衛生学 暗記アプリ</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+  <link rel="icon" href="./icons/icon-192.png">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div id="fatal" class="fatal" hidden></div>
+  <main class="app" id="app">
+    <header class="header">
+      <div class="header-main">
+        <div>
+          <p class="eyebrow">口腔衛生学</p>
+          <h1>一問一答 暗記アプリ</h1>
+          <p class="subtitle">既存491問に加えて、自分で問題を作成・編集できます。図表は必要なときだけ表示されます。</p>
+        </div>
+        <div class="header-actions">
+          <span class="saved-pill" id="savedAt">保存確認中</span>
+          <button class="small-button" id="installButton" type="button" hidden>アプリを追加</button>
+        </div>
+      </div>
+    </header>
+
+    <section class="quick-actions" aria-label="問題編集">
+      <button class="primary-button compact" id="createQuestionButton" type="button">＋ 問題を作る</button>
+      <button class="secondary-button compact" id="manageQuestionsButton" type="button">問題を管理</button>
+    </section>
+
+    <section class="stats" aria-label="学習状況">
+      <div class="stat"><strong id="totalCount">491</strong><span>有効な問題</span></div>
+      <div class="stat"><strong id="customCount">0</strong><span>自作問題</span></div>
+      <div class="stat"><strong id="reviewedCount">0</strong><span>学習済み</span></div>
+      <div class="stat"><strong id="unknownCount">0</strong><span>分からない</span></div>
+      <div class="stat"><strong id="knownCount">0</strong><span>わかった</span></div>
+    </section>
+
+    <section class="toolbar" aria-label="出題設定">
+      <div class="toolbar-grid">
+        <label class="control">表示する問題
+          <select id="mode">
+            <option value="all">すべての問題</option>
+            <option value="unlearned">未学習だけ</option>
+            <option value="unknown">分からなかった問題だけ</option>
+            <option value="known">わかった問題だけ</option>
+          </select>
+        </label>
+        <label class="control">単元
+          <select id="category"><option value="all">すべての単元</option></select>
+        </label>
+        <label class="control">問題の種類
+          <select id="sourceFilter">
+            <option value="all">既存＋自作</option>
+            <option value="base">既存問題だけ</option>
+            <option value="custom">自作問題だけ</option>
+            <option value="edited">編集した既存問題だけ</option>
+          </select>
+        </label>
+        <label class="control">出題順
+          <select id="order">
+            <option value="number">番号順</option>
+            <option value="shuffle">シャッフル</option>
+          </select>
+        </label>
+        <label class="control">表示テーマ
+          <select id="theme">
+            <option value="system">端末に合わせる</option>
+            <option value="light">ライト</option>
+            <option value="dark">ダーク</option>
+          </select>
+        </label>
+      </div>
+      <div class="search-row">
+        <input id="search" class="search-input" type="search" inputmode="search" placeholder="問題・解答・単元・タグを検索" autocomplete="off">
+        <button class="secondary-button" id="clearSearch" type="button">検索解除</button>
+        <button class="secondary-button" id="reshuffle" type="button">再シャッフル</button>
+      </div>
+      <div class="progress-track" aria-hidden="true"><div class="progress-bar" id="progressBar"></div></div>
+      <div class="progress-label"><span id="progressLabel">学習済み 0%</span><span id="filterCount">491問を表示</span></div>
+    </section>
+
+    <div class="notice" id="storageNotice" hidden></div>
+
+    <article class="study-card" id="studyCard">
+      <div class="card-top">
+        <div class="badges" id="badges"></div>
+        <div class="question-head">
+          <div class="question-number" id="questionNumber">問1 / 491</div>
+          <div class="card-actions">
+            <button class="text-button" id="editCurrentButton" type="button">編集</button>
+            <button class="text-button" id="duplicateCurrentButton" type="button">複製</button>
+          </div>
+        </div>
+        <h2 class="question" id="questionText"></h2>
+        <button class="figure-toggle" id="toggleFigures" type="button" hidden>図・表を表示</button>
+        <section class="figure-panel" id="figurePanel" aria-label="問題の図表" hidden>
+          <div class="figure-list" id="figureList"></div>
+        </section>
+      </div>
+      <div class="reveal-wrap" id="revealWrap">
+        <button class="primary-button" id="revealButton" type="button">解答を見る</button>
+      </div>
+      <div class="answer-area" id="answerArea" hidden>
+        <section class="answer-block"><h3>解答</h3><p id="answerText"></p></section>
+        <p class="question-note" id="questionNote" hidden></p>
+        <div class="judgement">
+          <button class="judge known" id="knownButton" type="button">✓ わかった</button>
+          <button class="judge unknown" id="unknownButton" type="button">！ 分からなかった</button>
+        </div>
+      </div>
+    </article>
+
+    <section class="empty-card" id="emptyCard" hidden>
+      <h2>条件に合う問題がありません</h2>
+      <p>絞り込み条件を変更するか、新しい問題を作成してください。</p>
+      <button class="primary-button" id="showAllButton" type="button">すべての問題に戻る</button>
+    </section>
+
+    <nav class="nav" aria-label="問題移動">
+      <button id="prevButton" type="button">← 前の問題</button>
+      <button id="nextButton" type="button">次の問題 →</button>
+    </nav>
+    <p class="position" id="position">1 / 491</p>
+
+    <section class="utility">
+      <h2>データ管理</h2>
+      <p>学習記録・自作問題・既存問題への編集・添付画像をまとめて保存できます。</p>
+      <div class="utility-buttons">
+        <button id="exportButton" type="button">完全バックアップを書き出す</button>
+        <label class="file-label">バックアップを読み込む<input id="importFile" type="file" accept="application/json,.json"></label>
+        <button id="resetUnknownButton" type="button">復習記録をリセット</button>
+        <button class="danger-button" id="resetAllButton" type="button">アプリ内データを初期化</button>
+      </div>
+      <p class="utility-note">問題を編集してもGitHub上のファイル自体は変わりません。編集内容はこの端末に保存されるため、定期的に完全バックアップを書き出してください。</p>
+    </section>
+  </main>
+
+  <dialog class="modal" id="editorDialog">
+    <form method="dialog" id="questionForm" class="modal-card">
+      <div class="modal-head"><div><p class="eyebrow" id="editorKind">自作問題</p><h2 id="editorTitle">問題を作成</h2></div><button class="close-button" id="closeEditorButton" type="button" aria-label="閉じる">×</button></div>
+      <input type="hidden" id="editingUid">
+      <div class="form-grid">
+        <label>単元<span class="required">必須</span><input id="editCategory" list="categoryList" required placeholder="例：歯周病のリスクファクター"><datalist id="categoryList"></datalist></label>
+        <label>タグ<input id="editTags" placeholder="例：重要, 数値, 図表"></label>
+      </div>
+      <label>問題文<span class="required">必須</span><textarea id="editQuestion" rows="4" required></textarea></label>
+      <label>解答<span class="required">必須</span><textarea id="editAnswer" rows="4" required></textarea></label>
+      <label>補足・メモ<textarea id="editNote" rows="2" placeholder="省略可"></textarea></label>
+      <section class="editor-figures">
+        <div class="section-heading"><div><h3>図・写真</h3><p>問題画面では「図・表を表示」を押すまで隠れます。</p></div><label class="file-label mini">画像を追加<input id="editImageInput" type="file" accept="image/*" multiple></label></div>
+        <div id="editorFigureList" class="editor-figure-list"></div>
+      </section>
+      <div class="modal-actions">
+        <button class="danger-button" id="deleteQuestionButton" type="button" hidden>この問題を削除</button>
+        <button class="secondary-button" id="restoreQuestionButton" type="button" hidden>元の問題に戻す</button>
+        <span class="action-spacer"></span>
+        <button class="secondary-button" value="cancel" type="button" id="cancelEditButton">キャンセル</button>
+        <button class="primary-button" type="submit">保存</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="modal wide" id="manageDialog">
+    <section class="modal-card manage-card">
+      <div class="modal-head"><div><p class="eyebrow">問題編集</p><h2>問題を管理</h2></div><button class="close-button" id="closeManageButton" type="button" aria-label="閉じる">×</button></div>
+      <div class="manage-tools">
+        <input id="manageSearch" class="search-input" type="search" placeholder="番号・問題・解答・単元を検索">
+        <label class="check-label"><input id="showDeleted" type="checkbox">削除済みも表示</label>
+        <button class="primary-button compact" id="createFromManageButton" type="button">＋ 新規作成</button>
+      </div>
+      <p id="manageCount" class="manage-count"></p>
+      <div id="manageList" class="manage-list"></div>
+    </section>
+  </dialog>
+
+  <dialog class="image-modal" id="imageDialog"><button class="image-close" id="imageClose" type="button">×</button><img id="imagePreview" alt="拡大した図表"><p id="imageCaption"></p></dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="./base-questions.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>

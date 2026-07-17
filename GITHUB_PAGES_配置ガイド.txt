@@ -1,0 +1,28 @@
+GitHub Pages 配置ガイド（問題作成・編集対応版）
+
+解凍後、このフォルダの「中身」をリポジトリ直下へアップロードしてください。
+
+正しい構成：
+index.html
+app.js
+base-questions.js
+styles.css
+sw.js
+manifest.webmanifest
+.nojekyll
+assets/
+  figures/
+    figure-01.jpg ～ figure-24.jpg
+icons/
+  icon-192.png
+  icon-512.png
+  apple-touch-icon.png
+
+GitHub Pages設定：
+Settings → Pages → Deploy from a branch → main → /(root) → Save
+
+重要：
+・assets と icons はフォルダです。iPhoneでフォルダ自体を選べない場合、GitHub上で同じ階層を作り、中のファイルをアップロードしてください。
+・問題の追加・編集内容は端末のIndexedDBに保存され、GitHubの元ファイルは自動更新されません。
+・Safariのデータ削除や端末変更に備え、アプリ内の「完全バックアップを書き出す」を定期的に使ってください。
+・新しい版に置き換えて古い画面が出る場合は、ホーム画面の旧アプリを削除してSafariで再読み込みしてください。

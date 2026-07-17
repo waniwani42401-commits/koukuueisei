@@ -1,0 +1,23 @@
+{
+  "name": "口腔衛生学 一問一答暗記アプリ",
+  "short_name": "口腔衛生学",
+  "description": "問題の追加・編集、画像添付、復習、バックアップに対応した暗記アプリ",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f3f7f5",
+  "theme_color": "#16795a",
+  "lang": "ja-JP",
+  "icons": [
+    {
+      "src": "./icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "./icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
